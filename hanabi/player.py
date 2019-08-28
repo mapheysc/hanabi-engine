@@ -3,11 +3,10 @@ from addict import Dict
 import hanabi.exceptions as exc
 from hanabi.piece import Piece
 from hanabi.action import HintAction
-from hanabi.piece import Piece
+
 
 class Player:
-
-    def __init__(self, _id, game, name='Anonymous'):
+    def __init__(self, _id, game, name="Anonymous"):
         """Create a player object"""
         self.name = name
         self.id = _id
@@ -25,11 +24,7 @@ class Player:
     @classmethod
     def from_json(cls, data, game):
         player = Dict(data)
-        player = cls(
-            data.id,
-            game,
-            name=data.name,
-        )
+        player = cls(data.id, game, name=data.name)
         player.pieces = [Piece.from_json(piece) for piece in data.pieces]
         return player
 
@@ -52,7 +47,7 @@ class Player:
         self.pieces.remove(piece)
         try:
             self.pieces.append(self.game.get_random_piece())
-        except IndexError as ie:
+        except IndexError:
             # Down to the final pieces
             pass
         if len(self.pieces) == 0:
@@ -60,21 +55,21 @@ class Player:
 
     def hint_action_give_color(self, affected_player, color):
         if self.game.num_hints > 0:
-            self.game.num_hints-=1
+            self.game.num_hints -= 1
         else:
             raise exc.HintException()
         affected_player.notify(HintAction(color=color))
 
     def hint_action_give_number(self, affected_player, number):
         if self.game.num_hints > 0:
-            self.game.num_hints-=1
+            self.game.num_hints -= 1
         else:
             raise exc.HintException()
         affected_player.notify(HintAction(number=number))
-        
+
     def view_binned_pieces(self):
         return self.game.binned_pieces
-        
+
     def view_played_pieces(self):
         return self.game.played_pieces
 
@@ -86,12 +81,12 @@ class Player:
 
     def notify(self, action):
         for piece in self.pieces:
-            if action.color == piece.color or piece.color == 'rainbow':
-                if piece.color == 'rainbow':
+            if action.color == piece.color or piece.color == "rainbow":
+                if piece.color == "rainbow":
                     piece.altcolor = action.color
                 piece.player_has_color = True
             elif action.number == piece.num_fireworks:
                 piece.player_has_number = True
 
     def __repr__(self):
-        return f'<{self.name} | {self.id} | {self.pieces}>'
+        return f"<{self.name} | {self.id} | {self.pieces}>"
