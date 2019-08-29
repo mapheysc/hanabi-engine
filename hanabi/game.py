@@ -1,4 +1,5 @@
-import json
+"""Game module for Game class."""
+
 import itertools as it
 
 from random import randint
@@ -8,16 +9,17 @@ import hanabi.exceptions as exc
 from hanabi.player import Player
 from hanabi.piece import Color, Piece
 
-class Game:
 
-    def __init__(self,
+class Game:
+    def __init__(
+        self,
         num_players,
         with_rainbows=False,
         name=None,
         num_hints=8,
         num_errors=4,
-        players=[]
-        ):
+        players=[],
+    ):
         """Create a game"""
         self.available_pieces = []
         self.binned_pieces = []
@@ -28,22 +30,34 @@ class Game:
         self.players = players
         self.name = name
         if self.with_rainbows:
-            Color.COLORS.append('rainbow')
+            Color.COLORS.append("rainbow")
         if not self.available_pieces:
             for color in Color.COLORS:
                 for num_fireworks in range(1, 6):
                     if num_fireworks == 1:
                         # 3 fireworks with value of 1
-                        self.available_pieces.append(Piece(num_fireworks=num_fireworks, color=color))
-                        self.available_pieces.append(Piece(num_fireworks=num_fireworks, color=color))
-                        self.available_pieces.append(Piece(num_fireworks=num_fireworks, color=color))
+                        self.available_pieces.append(
+                            Piece(num_fireworks=num_fireworks, color=color)
+                        )
+                        self.available_pieces.append(
+                            Piece(num_fireworks=num_fireworks, color=color)
+                        )
+                        self.available_pieces.append(
+                            Piece(num_fireworks=num_fireworks, color=color)
+                        )
                     elif num_fireworks == 5:
                         # 1 firework with value of 5
-                        self.available_pieces.append(Piece(num_fireworks=num_fireworks, color=color))
+                        self.available_pieces.append(
+                            Piece(num_fireworks=num_fireworks, color=color)
+                        )
                     else:
                         # 2 firework with value of anything other than 1 and 5
-                        self.available_pieces.append(Piece(num_fireworks=num_fireworks, color=color))
-                        self.available_pieces.append(Piece(num_fireworks=num_fireworks, color=color))
+                        self.available_pieces.append(
+                            Piece(num_fireworks=num_fireworks, color=color)
+                        )
+                        self.available_pieces.append(
+                            Piece(num_fireworks=num_fireworks, color=color)
+                        )
         if not self.players:
             self.players = [Player(i, self) for i in range(num_players)]
 
@@ -70,22 +84,28 @@ class Game:
             with_rainbows=data.with_rainbows,
             num_hints=int(data.num_hints),
             num_errors=int(data.num_errors),
-            name=data.name
+            name=data.name,
         )
-        game.available_pieces=[Piece.from_json(piece) for piece in data.available_pieces]
-        game.binned_pieces=[Piece.from_json(piece) for piece in data.binned_pieces]
-        game.played_pieces=[Piece.from_json(piece) for piece in data.played_pieces]
+        game.available_pieces = [
+            Piece.from_json(piece) for piece in data.available_pieces
+        ]
+        game.binned_pieces = [Piece.from_json(piece) for piece in data.binned_pieces]
+        game.played_pieces = [Piece.from_json(piece) for piece in data.played_pieces]
         game.players = [Player.from_json(player, game) for player in data.players]
         if int(data.num_errors) == 0:
             raise exc.YouLoseGoodDaySir()
         return game
 
     def get_piece(self, piece_id):
-        player_pieces = list(it.chain.from_iterable([player.pieces for player in self.players]))
-        pieces = self.played_pieces + \
-                 self.binned_pieces + \
-                 self.available_pieces + \
-                 player_pieces
+        player_pieces = list(
+            it.chain.from_iterable([player.pieces for player in self.players])
+        )
+        pieces = (
+            self.played_pieces
+            + self.binned_pieces
+            + self.available_pieces
+            + player_pieces
+        )
         return next(p for p in pieces if p.id == piece_id)
 
     def start_game(self):
@@ -96,18 +116,18 @@ class Game:
         player.pieces.append(self.get_random_piece())
 
     def get_random_piece(self):
-        piece = self.available_pieces[randint(0, len(self.available_pieces))-1]
+        piece = self.available_pieces[randint(0, len(self.available_pieces)) - 1]
         self.available_pieces.remove(piece)
         return piece
 
     def remove_piece(self, piece):
         self.binned_pieces.append(piece)
-        self.num_hints+=1
+        self.num_hints += 1
 
     def piece_can_be_played(self, piece):
         for p in self.played_pieces:
             if p == piece:
-                raise Exception('I have no idea how this happened.')
+                raise Exception("I have no idea how this happened.")
             if p.color == piece.color:
                 if p.num_fireworks == piece.num_fireworks - 1:
                     return True
@@ -121,9 +141,9 @@ class Game:
         if self.piece_can_be_played(piece):
             self.played_pieces.append(piece)
             if piece.num_fireworks == 5:
-                self.num_hints+=1
+                self.num_hints += 1
         else:
             self.binned_pieces.append(piece)
-            self.num_errors-=1
+            self.num_errors -= 1
             if self.num_errors == 0:
                 raise exc.YouLoseGoodDaySir()
