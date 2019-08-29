@@ -33,6 +33,8 @@ class Player:
             self.pieces.append(self.game.get_random_piece())
 
     def remove_piece(self, piece):
+        if not self.game.player_has_turn(self):
+            raise exc.NotPlayersTurn(self)
         if len(self.pieces) == 0:
             raise exc.TooLittlePiecesError(self)
         else:
@@ -43,6 +45,8 @@ class Player:
             raise exc.YouLoseGoodDaySir()
 
     def play_piece(self, piece):
+        if not self.game.player_has_turn(self):
+            raise exc.NotPlayersTurn(self)
         self.game.play_piece(piece)
         self.pieces.remove(piece)
         try:
@@ -54,6 +58,8 @@ class Player:
             raise exc.YouLoseGoodDaySir()
 
     def hint_action_give_color(self, affected_player, color):
+        if not self.game.player_has_turn(self):
+            raise exc.NotPlayersTurn(self)
         if self.game.num_hints > 0:
             self.game.num_hints -= 1
         else:
@@ -61,6 +67,8 @@ class Player:
         affected_player.notify(HintAction(color=color))
 
     def hint_action_give_number(self, affected_player, number):
+        if not self.game.player_has_turn(self):
+            raise exc.NotPlayersTurn(self)
         if self.game.num_hints > 0:
             self.game.num_hints -= 1
         else:

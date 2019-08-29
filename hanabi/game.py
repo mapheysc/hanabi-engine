@@ -9,7 +9,34 @@ import hanabi.exceptions as exc
 from hanabi.player import Player
 from hanabi.piece import Color, Piece
 
-
+def init_pieces():
+    pieces = []
+    for color in Color.COLORS:
+        for num_fireworks in range(1, 6):
+            if num_fireworks == 1:
+                # 3 fireworks with value of 1
+                pieces.append(
+                    Piece(num_fireworks=num_fireworks, color=color)
+                )
+                pieces.append(
+                    Piece(num_fireworks=num_fireworks, color=color)
+                )
+                pieces.append(
+                    Piece(num_fireworks=num_fireworks, color=color)
+                )
+            elif num_fireworks == 5:
+                # 1 firework with value of 5
+                pieces.append(
+                    Piece(num_fireworks=num_fireworks, color=color)
+                )
+            else:
+                # 2 firework with value of anything other than 1 and 5
+                pieces.append(
+                    Piece(num_fireworks=num_fireworks, color=color)
+                )
+                pieces.append(
+                    Piece(num_fireworks=num_fireworks, color=color)
+                )
 class Game:
     def __init__(
         self,
@@ -18,48 +45,20 @@ class Game:
         name=None,
         num_hints=8,
         num_errors=4,
-        players=[],
+        turn=0
     ):
         """Create a game"""
-        self.available_pieces = []
+        self.available_pieces = init_pieces()
         self.binned_pieces = []
         self.played_pieces = []
         self.num_hints = num_hints
         self.num_errors = num_errors
         self.with_rainbows = with_rainbows
-        self.players = players
+        self.players = [Player(i, self) for i in range(num_players)]
         self.name = name
         if self.with_rainbows:
             Color.COLORS.append("rainbow")
-        if not self.available_pieces:
-            for color in Color.COLORS:
-                for num_fireworks in range(1, 6):
-                    if num_fireworks == 1:
-                        # 3 fireworks with value of 1
-                        self.available_pieces.append(
-                            Piece(num_fireworks=num_fireworks, color=color)
-                        )
-                        self.available_pieces.append(
-                            Piece(num_fireworks=num_fireworks, color=color)
-                        )
-                        self.available_pieces.append(
-                            Piece(num_fireworks=num_fireworks, color=color)
-                        )
-                    elif num_fireworks == 5:
-                        # 1 firework with value of 5
-                        self.available_pieces.append(
-                            Piece(num_fireworks=num_fireworks, color=color)
-                        )
-                    else:
-                        # 2 firework with value of anything other than 1 and 5
-                        self.available_pieces.append(
-                            Piece(num_fireworks=num_fireworks, color=color)
-                        )
-                        self.available_pieces.append(
-                            Piece(num_fireworks=num_fireworks, color=color)
-                        )
-        if not self.players:
-            self.players = [Player(i, self) for i in range(num_players)]
+        self.turn = turn
 
     @property
     def dict(self):
@@ -72,6 +71,7 @@ class Game:
         game_state.num_errors = self.num_errors
         game_state.with_rainbows = self.with_rainbows
         game_state.name = self.name
+        game_state.turn = self.turn
         if self.num_errors == 0:
             raise exc.YouLoseGoodDaySir()
         return game_state.to_dict()
@@ -85,6 +85,7 @@ class Game:
             num_hints=int(data.num_hints),
             num_errors=int(data.num_errors),
             name=data.name,
+            turn=data.turn
         )
         game.available_pieces = [
             Piece.from_json(piece) for piece in data.available_pieces
@@ -95,6 +96,9 @@ class Game:
         if int(data.num_errors) == 0:
             raise exc.YouLoseGoodDaySir()
         return game
+
+    def player_has_turn(self, player):
+        return True if self.turn == player.id else False
 
     def get_piece(self, piece_id):
         player_pieces = list(

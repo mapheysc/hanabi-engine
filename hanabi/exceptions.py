@@ -52,3 +52,11 @@ class NoKnownNumberException(Exception):
 
     def __str__(self):
         return self.message
+
+
+class NotPlayersTurn(Exception):
+    def __init__(self, player):
+        self.message = f"Player {player.id} does not have turn."
+
+    def __str__(self):
+        return self.message
