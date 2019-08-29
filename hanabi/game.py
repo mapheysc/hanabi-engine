@@ -37,6 +37,7 @@ def init_pieces():
                 pieces.append(
                     Piece(num_fireworks=num_fireworks, color=color)
                 )
+    return pieces
 class Game:
     def __init__(
         self,
