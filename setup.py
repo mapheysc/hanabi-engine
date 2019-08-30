@@ -8,4 +8,7 @@ setup(name='hanabi',
       version=VERSION,
       author='Sam Maphey',
       packages=find_packages(),
+      install_requires=[
+          'addict',
+      ]
       )

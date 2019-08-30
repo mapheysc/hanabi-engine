@@ -35,6 +35,7 @@ class Player:
     def remove_piece(self, piece):
         if not self.game.player_has_turn(self):
             raise exc.NotPlayersTurn(self)
+        self.game.turn+=1
         if len(self.pieces) == 0:
             raise exc.TooLittlePiecesError(self)
         else:
@@ -47,6 +48,7 @@ class Player:
     def play_piece(self, piece):
         if not self.game.player_has_turn(self):
             raise exc.NotPlayersTurn(self)
+        self.game.turn+=1
         self.game.play_piece(piece)
         self.pieces.remove(piece)
         try:
@@ -60,6 +62,7 @@ class Player:
     def hint_action_give_color(self, affected_player, color):
         if not self.game.player_has_turn(self):
             raise exc.NotPlayersTurn(self)
+        self.game.turn+=1
         if self.game.num_hints > 0:
             self.game.num_hints -= 1
         else:
@@ -69,6 +72,7 @@ class Player:
     def hint_action_give_number(self, affected_player, number):
         if not self.game.player_has_turn(self):
             raise exc.NotPlayersTurn(self)
+        self.game.turn+=1
         if self.game.num_hints > 0:
             self.game.num_hints -= 1
         else:

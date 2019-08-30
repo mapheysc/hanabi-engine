@@ -60,6 +60,7 @@ class Game:
         if self.with_rainbows:
             Color.COLORS.append("rainbow")
         self.turn = turn
+        self.has_finished = False
 
     @property
     def dict(self):
@@ -99,7 +100,7 @@ class Game:
         return game
 
     def player_has_turn(self, player):
-        return True if self.turn == player.id else False
+        return True if self.turn % len(self.players) == player.id else False
 
     def get_piece(self, piece_id):
         player_pieces = list(
@@ -151,4 +152,5 @@ class Game:
             self.binned_pieces.append(piece)
             self.num_errors -= 1
             if self.num_errors == 0:
+                self.has_finished = True
                 raise exc.YouLoseGoodDaySir()
