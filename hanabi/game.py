@@ -1,4 +1,4 @@
-"""Game module for Game class."""
+"""Game handler for hanabi."""
 
 import itertools as it
 
@@ -48,7 +48,7 @@ def init_pieces():
 
 
 class Game:
-    """Create a game object."""
+    """Create a ``Game`` object."""
 
     def __init__(
         self,
@@ -129,7 +129,7 @@ class Game:
     def player_has_turn(self, player):
         """
         Check to see if it is the players turn.
-        
+
         :param player: The player to check against.
         :returns: True if it is the players turn. False otherwise.
         """
@@ -138,7 +138,7 @@ class Game:
     def get_piece(self, piece_id):
         """
         Get a piece object from a given id.
-        
+
         :param piece_id: The id of the piece.
         :returns: The piece if found in the games pieces.
         """

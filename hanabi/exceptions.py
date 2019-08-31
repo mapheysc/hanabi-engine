@@ -97,7 +97,7 @@ class NotPlayersTurn(Exception):
     def __init__(self, player):
         """
         Initialize an ``NotPlayersTurn`` exception.
-        
+
         :param player: The player who tried to play.
         """
         self.message = f"Player {player} does not have turn."
