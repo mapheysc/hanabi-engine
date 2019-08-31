@@ -1,8 +1,9 @@
 """Define user package requirements and various project metadata."""
 
 from setuptools import setup, find_packages
+import hanabi
 
-VERSION = '1.0.0'
+VERSION = hanabi.__VERSION__
 
 setup(name='hanaby',
       version=VERSION,
